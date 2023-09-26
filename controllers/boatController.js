@@ -1,8 +1,26 @@
 const asyncHandler = require('express-async-handler');
+
 const Boat = require('../models/boat');
+const Designer = require('../models/designer');
+const Manufacturer = require('../models/manufacturer');
+const Type = require('../models/type');
 
 exports.index = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Site Home Page');
+  // Get counts of all collections
+  const [numBoats, numDesigners, numManufacturers, numTypes] = await Promise.all([
+    Boat.countDocuments({}).exec(),
+    Designer.countDocuments({}).exec(),
+    Manufacturer.countDocuments({}).exec(),
+    Type.countDocuments({}).exec(),
+  ]);
+
+  res.render('index', {
+    title: 'Boat Inventory',
+    numBoats,
+    numDesigners,
+    numManufacturers,
+    numTypes,
+  });
 });
 
 // Display list of all the boats
