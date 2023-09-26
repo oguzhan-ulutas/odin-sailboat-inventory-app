@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const DesignerSchema = new Schema({
-  name: { type: String, required: true, maxLength: 100 },
+  first_name: { type: String, required: true, maxLength: 100 },
   last_name: { type: String, required: true, maxLength: 100 },
 });
 

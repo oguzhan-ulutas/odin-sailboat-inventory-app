@@ -6,7 +6,7 @@ const TypeSchema = new Schema({
   type: { type: String, maxLength: 100 },
 });
 
-ManufacturerSchema.virtual('url').get(function () {
+TypeSchema.virtual('url').get(function () {
   return `/catalog/type/${this._id}`;
 });
 
