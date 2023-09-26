@@ -1,14 +1,18 @@
 const asyncHandler = require('express-async-handler');
 const Boat = require('../models/boat');
 
+exports.index = asyncHandler(async (req, res, next) => {
+  res.send('NOT IMPLEMENTED: Site Home Page');
+});
+
 // Display list of all the boats
 exports.boatList = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Boat List');
+  res.send('NOT IMPLEMENTED: Boat List'));
 });
 
 // Display detail page for a specific boat
 exports.boatDetail = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Boat List');
+  res.send(`NOT IMPLEMENTED: Boat Detail:${req.params.id}`);
 });
 
 // Display boat create form on GET
@@ -38,5 +42,5 @@ exports.boatUpdateGet = asyncHandler(async (req, res, next) => {
 
 // Handle boat update on POST.
 exports.boatUpdatePost = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Author update POST');
+  res.send('NOT IMPLEMENTED: Boat update POST');
 });
