@@ -3,7 +3,9 @@ const Designer = require('../models/designer');
 
 // Display list of all the designer
 exports.designerList = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Designer List');
+  const allDesigners = await Designer.find().exec();
+
+  res.render('designer_list', { title: 'Designers', allDesigners });
 });
 
 // Display detail page for a specific designer

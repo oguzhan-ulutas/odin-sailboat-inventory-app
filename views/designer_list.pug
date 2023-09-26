@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1= title
+
+  ul
+    each designer in allDesigners
+      li
+        a(href=designer.url) #{`${designer.first_name} ${designer.last_name}`}
+
+    else
+      li There are no designer.
