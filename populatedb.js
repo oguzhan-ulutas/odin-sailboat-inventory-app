@@ -103,7 +103,7 @@ async function createTypes() {
   console.log('Adding types');
   await Promise.all([
     typeCreate(0, 'Sailboat'),
-    typeCreate(1, 'Power Boats'),
+    typeCreate(1, 'Power Boat'),
     typeCreate(2, 'Catamaran'),
   ]);
 }
@@ -121,8 +121,8 @@ async function createManufacturers() {
   console.log('Adding Manufucturers');
   await Promise.all([
     manufacturerCreate(0, 'Nautor', 'Finland', 'Pietarsaari'),
-    manufacturerCreate(0, 'Pacific Seacraft', 'USA', 'Seattle'),
-    manufacturerCreate(0, 'Joshua Slocum', 'World', 'World'),
+    manufacturerCreate(1, 'Pacific Seacraft', 'USA', 'Seattle'),
+    manufacturerCreate(2, 'Joshua Slocum', 'World', 'World'),
   ]);
 }
 

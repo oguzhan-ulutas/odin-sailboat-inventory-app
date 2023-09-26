@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const TypeSchema = new Schema({
-  type: { type: String, maxLength: 100 },
+  name: { type: String, maxLength: 100 },
 });
 
 TypeSchema.virtual('url').get(function () {

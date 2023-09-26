@@ -25,7 +25,13 @@ exports.index = asyncHandler(async (req, res, next) => {
 
 // Display list of all the boats
 exports.boatList = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Boat List');
+  const allBoats = await Boat.find({}, 'model manufacturer')
+    .sort({ model: 1 })
+    .populate('manufacturer')
+    .exec();
+  console.log(allBoats[0].manufacturer[0].name);
+
+  res.render('boat_list', { title: 'Boat List', allBoats });
 });
 
 // Display detail page for a specific boat

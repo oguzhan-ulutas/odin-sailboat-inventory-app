@@ -35,7 +35,7 @@ router.post('/boat/:id/update', boatController.boatUpdatePost);
 router.get('/boat/:id', boatController.boatDetail);
 
 // Get req. for list of all the boats
-router.get('/boat', boatController.boatList);
+router.get('/boats', boatController.boatList);
 
 // DESIGNER ROUTES
 
@@ -61,7 +61,7 @@ router.post('/designer/:id/update', designerController.designerUpdatePost);
 router.get('/designer/:id', designerController.designerDetail);
 
 // Get req. for list of all the designer
-router.get('/designer', designerController.designerList);
+router.get('/designers', designerController.designerList);
 
 // MANUFACTURER ROUTES
 
@@ -87,7 +87,7 @@ router.post('/manufacturer/:id/update', manufacturerController.manufacturerUpdat
 router.get('/manufacturer/:id', manufacturerController.manufacturerDetail);
 
 // Get req. for list of all the manufacturer
-router.get('/manufacturer', manufacturerController.manufacturerList);
+router.get('/manufacturers', manufacturerController.manufacturerList);
 
 // TYPE ROUTES
 
@@ -113,6 +113,6 @@ router.post('/type/:id/update', typeController.typeUpdatePost);
 router.get('/type/:id', typeController.typeDetail);
 
 // Get req. for list of all the type
-router.get('/type', typeController.typeList);
+router.get('/types', typeController.typeList);
 
 module.exports = router;

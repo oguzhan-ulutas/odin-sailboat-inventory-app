@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1= title
+
+  ul
+    each boat in allBoats
+      li
+        a(href=boat.url) #{boat.model}
+        |  (#{boat.manufacturer[0].name})
+
+    else
+      li There are no boats.
