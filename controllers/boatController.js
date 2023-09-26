@@ -7,7 +7,7 @@ exports.index = asyncHandler(async (req, res, next) => {
 
 // Display list of all the boats
 exports.boatList = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Boat List'));
+  res.send('NOT IMPLEMENTED: Boat List');
 });
 
 // Display detail page for a specific boat
