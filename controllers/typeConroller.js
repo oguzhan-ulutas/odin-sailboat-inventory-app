@@ -3,7 +3,9 @@ const Type = require('../models/type');
 
 // Display list of all the types
 exports.typeList = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Type List');
+  const allTypes = await Type.find().exec();
+
+  res.render('type_list', { title: 'Boat Type List', allTypes });
 });
 
 // Display detail page for a specific type
