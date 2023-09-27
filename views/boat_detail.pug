@@ -1,0 +1,24 @@
+extends layout
+
+block content
+
+  h1 #{title}
+
+  h2 Boat: #{boat.model} 
+
+  div
+    p #[Strong Manufacturer: ] 
+        a(href=boat.manufacturer[0].url) #{boat.manufacturer[0].name} 
+        |(#{boat.manufacturer[0].city}, #{boat.manufacturer[0].country})
+    
+    p #[Strong Designer: ] 
+        a(href=boat.designer[0].url) #{boat.designer[0].first_name} #{boat.designer[0].last_name}
+
+    p #[Strong Type: ] 
+        a(href=boat.type[0].url) #{boat.type[0].name} 
+
+    p #[Strong Displacement: ] #{boat.displacement} 
+
+    p #[Strong Beam: ] #{boat.beam} 
+
+    p #[Strong Ballast: ] #{boat.ballast} 

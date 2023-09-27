@@ -36,7 +36,24 @@ exports.boatList = asyncHandler(async (req, res, next) => {
 
 // Display detail page for a specific boat
 exports.boatDetail = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: Boat Detail:${req.params.id}`);
+  // Get boat detail
+  const boat = await Boat.findById(req.params.id)
+    .populate('manufacturer')
+    .populate('type')
+    .populate('designer')
+    .exec();
+
+  if (boat === null) {
+    // No boat
+    const err = new Error('Boat is not found.');
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render('boat_detail', {
+    title: 'Boat Details',
+    boat,
+  });
 });
 
 // Display boat create form on GET

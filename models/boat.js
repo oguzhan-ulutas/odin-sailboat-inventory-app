@@ -16,7 +16,7 @@ const BoatSchema = new Schema({
 
 // virtuals for Boat url
 BoatSchema.virtual('url').get(function () {
-  return `/catalog/boats/${this._id}`;
+  return `/catalog/boat/${this._id}`;
 });
 
 module.exports = mongoose.model('Boat', BoatSchema);
