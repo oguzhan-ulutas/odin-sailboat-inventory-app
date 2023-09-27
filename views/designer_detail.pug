@@ -4,17 +4,17 @@ block content
 
   h1 #{title}
 
-  h2 Manufacturer: #{manufacturer.name}
+  h2 Designer: #{designer.first_name} #{designer.last_name}
 
   div
 
     h4 Boats
 
     dl(class="item-detail-page")
-      each boat in boatsManufactured
+      each boat in boatsDesigned 
         dt
           a(href=boat.url) #{boat.model} 
-          | (Type: #{boat.type[0].name})
+          | (Manufacturer: #{boat.manufacturer[0].name})
 
       else
         p This genre has no boats.

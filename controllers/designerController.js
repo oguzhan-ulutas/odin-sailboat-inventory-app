@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Designer = require('../models/designer');
+const Boat = require('../models/boat');
 
 // Display list of all the designer
 exports.designerList = asyncHandler(async (req, res, next) => {
@@ -10,7 +11,23 @@ exports.designerList = asyncHandler(async (req, res, next) => {
 
 // Display detail page for a specific designer
 exports.designerDetail = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: Designer Detail: ${req.params.id}`);
+  const [designer, boatsDesigned] = await Promise.all([
+    Designer.findById(req.params.id).exec(),
+    Boat.find({ designer: req.params.id }, 'model manufacturer').populate('manufacturer').exec(),
+  ]);
+
+  if (designer === null) {
+    // No designer
+    const err = new Error('Designer could not found.');
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render('designer_detail', {
+    title: 'Designer Details',
+    designer,
+    boatsDesigned,
+  });
 });
 
 // Display designer create form on GET
