@@ -1,4 +1,6 @@
 const asyncHandler = require('express-async-handler');
+const { body, validationResult } = require('express-validator');
+
 const Type = require('../models/type');
 const Boat = require('../models/boat');
 
@@ -32,14 +34,44 @@ exports.typeDetail = asyncHandler(async (req, res, next) => {
 });
 
 // Display type create form on GET
-exports.typeCreateGet = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Type Create GET');
-});
-
+exports.typeCreateGet = (req, res, next) => {
+  res.render('type_form', { title: 'Create Type' });
+};
 // Handle type create on POST.
-exports.typeCreatePost = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: type create POST');
-});
+exports.typeCreatePost = [
+  // Validate and sanitize name field
+  body('name', 'Type must be at least 3 characters').trim().isLength({ min: 3 }).escape(),
+
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request
+    const errors = validationResult(req);
+
+    // Create a type object with escaped and trimmed data
+    const type = new Type({ name: req.body.name });
+
+    if (!errors.isEmpty()) {
+      // There is errors render form again
+      res.render('type_form', {
+        title: 'Create Type',
+        type,
+        errors: errors.array(),
+      });
+    } else {
+      // Data from the form is valid
+      // Check if is there same type
+      const typeExist = await Type.findOne({ name: req.body.name }).exec();
+      if (typeExist) {
+        // Redirect to type detail page
+        res.redirect(typeExist.url);
+      } else {
+        await type.save();
+        // New type saved redirect to new type detail page
+        res.redirect(type.url);
+      }
+    }
+  }),
+];
 
 // Display type delete form on GET.
 exports.typeDeleteGet = asyncHandler(async (req, res, next) => {
