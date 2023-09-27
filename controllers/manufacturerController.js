@@ -1,4 +1,5 @@
 const asyncHandler = require('express-async-handler');
+const { body, validationResult } = require('express-validator');
 const Manufacturer = require('../models/manufacturer');
 const Boat = require('../models/boat');
 
@@ -33,13 +34,68 @@ exports.manufacturerDetail = asyncHandler(async (req, res, next) => {
 
 // Display manufacturer create form on GET
 exports.manufacturerCreateGet = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Manufacturer Create GET');
+  res.render('manufacturer_form', { title: 'Create Manufacturer' });
 });
 
 // Handle manufacturer create on POST.
-exports.manufacturerCreatePost = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Manufacturer create POST');
-});
+exports.manufacturerCreatePost = [
+  // Validate and sanitize the fields
+  body('name')
+    .trim()
+    .isLength({ min: 3 })
+    .escape()
+    .withMessage('Name must be specified.')
+    .isAlphanumeric()
+    .withMessage('Name has non-alphanumeric characters.'),
+  body('country')
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .isAlphanumeric()
+    .withMessage('Name has non-alphanumeric characters.'),
+  body('city')
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .isAlphanumeric()
+    .withMessage('Name has non-alphanumeric characters.'),
+
+  // Process req. after validation and sanitization
+  asyncHandler(async (req, res, next) => {
+    // extract erros from form request
+    const errors = validationResult(req);
+
+    // Create new manufacturer obj from form data
+    const manufacturer = new Manufacturer({
+      name: req.body.name,
+      country: req.body.country,
+      city: req.body.city,
+    });
+
+    if (!errors.isEmpty) {
+      // There is errors redirect to manufacturer create form
+      res.redirect('manufacturer_form', {
+        title: 'Create Manufacturer',
+        manufacturer,
+        errors: errors.array(),
+      });
+    } else {
+      // Data is valid
+
+      // Check if manufacturer exist in database
+      const manufacturerExist = await Manufacturer.findOne({ name: manufacturer.name }).exec();
+      if (manufacturerExist) {
+        // Manufacturer exist redirect to manufacturer detail page
+        res.redirect(manufacturerExist.url);
+      } else {
+        // Save manufacturer
+        await manufacturer.save();
+        // Redirect to new manufacturer page
+        res.redirect(manufacturer.url);
+      }
+    }
+  }),
+];
 
 // Display manufacturer delete form on GET.
 exports.manufacturerDeleteGet = asyncHandler(async (req, res, next) => {
