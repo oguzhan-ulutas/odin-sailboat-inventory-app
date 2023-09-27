@@ -19,7 +19,7 @@ a {
   height: 95vh;
   width: 95vw;
   display: grid;
-  grid-template-columns: 1fr 3fr;
+  grid-template-columns: 1fr 4fr;
   grid-template-rows: 10fr 1fr;
   gap: 10px;
 }
@@ -27,6 +27,7 @@ a {
   grid-area: 1 / 1 / 2 / 2;
   padding: 10px;
   font-size: 1.5vw;
+  border-right: 7px ridge rgb(200, 200, 200);
 }
 .main-content-container {
   grid-area: 1 / 2 / 2 / 3;
@@ -39,4 +40,10 @@ a {
 }
 li {
   margin-bottom: 10px;
+}
+.item-detail-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 10px;
 }

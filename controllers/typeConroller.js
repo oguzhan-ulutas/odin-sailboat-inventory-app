@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Type = require('../models/type');
+const Boat = require('../models/boat');
 
 // Display list of all the types
 exports.typeList = asyncHandler(async (req, res, next) => {
@@ -10,7 +11,24 @@ exports.typeList = asyncHandler(async (req, res, next) => {
 
 // Display detail page for a specific type
 exports.typeDetail = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: Type Detail: ${req.params.id}`);
+  // Get type and all the boats on that type
+  const [type, boatsInType] = await Promise.all([
+    Type.findById(req.params.id).exec(),
+    Boat.find({ type: req.params.id }, 'model manufacturer').populate('manufacturer').exec(),
+  ]);
+
+  if (type === null) {
+    // No type
+    const err = new Error('Type is not found');
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render('type_detail', {
+    title: 'Type Detail',
+    type,
+    boatsInType,
+  });
 });
 
 // Display type create form on GET
