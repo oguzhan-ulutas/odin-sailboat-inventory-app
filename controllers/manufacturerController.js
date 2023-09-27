@@ -74,7 +74,7 @@ exports.manufacturerCreatePost = [
 
     if (!errors.isEmpty) {
       // There is errors redirect to manufacturer create form
-      res.redirect('manufacturer_form', {
+      res.render('manufacturer_form', {
         title: 'Create Manufacturer',
         manufacturer,
         errors: errors.array(),

@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1 #{title}
+
+  form(method='POST' action='')
+    div.form-group
+      label(for='first_name') First Name:
+      input#first-name.form-control(type='text', placeholder='John, Bob etc.' name='first_name' value=(undefined===designer ? '' : designer.first_name))
+    div.form-group
+      label(for='last_name') Last Name:
+      input#last-name.form-control(type='text', placeholder='Smith, Brown etc.' name='last_name' value=(undefined===designer ? '' : designer.last_name))
+    button.btn.btn-primary(type='submit') Submit
+
+  if errors
+   ul
+    for error in errors
+     li!= error.msg
