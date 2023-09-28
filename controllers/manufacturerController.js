@@ -146,10 +146,62 @@ exports.manufacturerDeletePost = asyncHandler(async (req, res, next) => {
 
 // Display manufacturer update form on GET.
 exports.manufacturerUpdateGet = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Manufacturer update GET');
+  res.render('manufacturer_form', { title: 'Update Manufacturer' });
 });
 
 // Handle manufacturer update on POST.
-exports.manufacturerUpdatePost = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Manufacturer update POST');
-});
+exports.manufacturerUpdatePost = [
+  // Validate and sanitize the fields
+  body('name')
+    .trim()
+    .isLength({ min: 3 })
+    .escape()
+    .withMessage('Name must be specified.')
+    .isAlphanumeric()
+    .withMessage('Name has non-alphanumeric characters.'),
+  body('country')
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .isAlphanumeric()
+    .withMessage('Name has non-alphanumeric characters.'),
+  body('city')
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .isAlphanumeric()
+    .withMessage('Name has non-alphanumeric characters.'),
+
+  // Process req. after validation and sanitization
+  asyncHandler(async (req, res, next) => {
+    // extract erros from form request
+    const errors = validationResult(req);
+
+    // Create new manufacturer obj from form data
+    const manufacturer = new Manufacturer({
+      name: req.body.name,
+      country: req.body.country,
+      city: req.body.city,
+      _id: req.params.id,
+    });
+
+    if (!errors.isEmpty()) {
+      // There is errors redirect to manufacturer create form
+      res.render('manufacturer_form', {
+        title: 'Update Manufacturer',
+        manufacturer,
+        errors: errors.array(),
+      });
+    } else {
+      // Data is valid update manufacturer
+
+      const updatedManufacturer = await Manufacturer.findByIdAndUpdate(
+        req.params.id,
+        manufacturer,
+        {},
+      );
+      // Redirect to new manufacturer page
+      res.redirect(updatedManufacturer.url);
+    }
+  }),
+];
