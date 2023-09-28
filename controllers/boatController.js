@@ -164,12 +164,29 @@ exports.boatCreatePost = [
 
 // Display boat delete form on GET.
 exports.boatDeleteGet = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Boat delete GET');
+  // Get detail of boat
+  const boat = await Boat.findById(req.params.id)
+    .populate('manufacturer')
+    .populate('designer')
+    .populate('type')
+    .exec();
+
+  if (boat === null) {
+    // No boat, redirect to boat list page
+    res.redirect('/catalog/boats');
+  }
+
+  res.render('boat_delete', {
+    title: 'Delete Boat',
+    boat,
+  });
 });
 
 // Handle boat delete on POST.
 exports.boatDeletePost = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Boat delete POST');
+  // Delete boat
+  await Boat.findByIdAndRemove(req.body.boatId);
+  res.redirect('/catalog/boats');
 });
 
 // Display boat update form on GET.
