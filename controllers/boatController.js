@@ -274,7 +274,7 @@ exports.boatUpdatePost = [
         Type.find().exec(),
       ]);
       res.render('boat_form', {
-        title: 'Create Boat',
+        title: 'Update Boat',
         allManufacturers,
         allDesigners,
         allTypes,

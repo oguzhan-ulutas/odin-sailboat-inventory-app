@@ -81,12 +81,12 @@ exports.designerCreatePost = [
         last_name: designer.last_name,
       }).exec();
       if (designerExist) {
-        // Designer exist redirect to manufacturer detail page
+        // Designer exist redirect to designer detail page
         res.redirect(designerExist.url);
       } else {
         // Save manufacturer
         await designer.save();
-        // Redirect to new manufacturer page
+        // Redirect to new designer page
         res.redirect(designer.url);
       }
     }
@@ -138,10 +138,50 @@ exports.designerDeletePost = asyncHandler(async (req, res, next) => {
 
 // Display designer update form on GET.
 exports.designerUpdateGet = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Designer update GET');
+  res.render('designer_form', { title: 'Update Designer' });
 });
 
 // Handle designer update on POST.
-exports.designerUpdatePost = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: designer update POST');
-});
+exports.designerUpdatePost = [
+  // Validate and sanitize form data
+  body('first_name')
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage('First name must be specified.')
+    .isAlphanumeric()
+    .withMessage('First name has non-alphanumeric characters.'),
+  body('last_name')
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage('Family name must be specified.')
+    .isAlphanumeric()
+    .withMessage('Family name has non-alphanumeric characters.'),
+
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create Designer object with escaped and trimmed data
+    const designer = new Designer({
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      _id: req.params.id,
+    });
+
+    if (!errors.isEmpty()) {
+      // There is errors redirect to designer create form
+      res.render('designer_form', {
+        title: 'Update Designer',
+        designer,
+        errors: errors.array(),
+      });
+    } else {
+      // Data is valid, Update designer
+      const updatedDesigner = await Designer.findByIdAndUpdate(req.params.id, designer, {});
+      // Redirect to new manufacturer page
+      res.redirect(updatedDesigner.url);
+    }
+  }),
+];
