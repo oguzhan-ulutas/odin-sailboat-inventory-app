@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 const indexRouter = require('./routes/index');
 const catalogRouter = require('./routes/catalog'); // Import routes for "catalog" area of site
@@ -11,8 +12,8 @@ const catalogRouter = require('./routes/catalog'); // Import routes for "catalog
 const app = express();
 
 mongoose.set('strictQuery', false);
-const mongoDB =
-  'mongodb+srv://mkoulutas:TLZVnEraGglYS4Uu@cluster0.d91z02j.mongodb.net/?retryWrites=true&w=majority';
+
+const mongoDB = process.env.MONGODB_URI;
 
 main().catch((err) => console.log(err));
 async function main() {
