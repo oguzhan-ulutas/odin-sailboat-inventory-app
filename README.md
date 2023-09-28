@@ -3,7 +3,7 @@
 An inventory application for sailboats
 [The Odin Project exercise](https://www.theodinproject.com/lessons/nodejs-inventory-application) to learn NodJS, Express.
 
-[Live Preview](https://oguzhan-shopping-app.netlify.app/)
+[Live Preview](https://odin-sailboat-inventory-app-production.up.railway.app)
 
 **What I learned with this project;**
 
