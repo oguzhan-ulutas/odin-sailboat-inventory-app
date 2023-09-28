@@ -120,10 +120,34 @@ exports.typeDeletePost = asyncHandler(async (req, res, next) => {
 
 // Display type update form on GET.
 exports.typeUpdateGet = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: type update GET');
+  res.render('type_form', { title: 'Create Type' });
 });
 
 // Handle type update on POST.
-exports.typeUpdatePost = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: type update POST');
-});
+exports.typeUpdatePost = [
+  // Validate and sanitize name field
+  body('name', 'Type must be at least 3 characters').trim().isLength({ min: 3 }).escape(),
+
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request
+    const errors = validationResult(req);
+
+    // Create a type object with escaped and trimmed data
+    const type = new Type({ name: req.body.name, _id: req.params.id });
+
+    if (!errors.isEmpty()) {
+      // There is errors render form again
+      res.render('type_form', {
+        title: 'Update Type',
+        type,
+        errors: errors.array(),
+      });
+    } else {
+      // Data from the form is valid, update type
+      const updatedType = await Type.findByIdAndUpdate(req.params.id, type, {});
+      // New type saved redirect to new type detail page
+      res.redirect(updatedType.url);
+    }
+  }),
+];
