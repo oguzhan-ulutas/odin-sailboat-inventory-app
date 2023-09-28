@@ -187,10 +187,106 @@ exports.boatDeletePost = asyncHandler(async (req, res, next) => {
 
 // Display boat update form on GET.
 exports.boatUpdateGet = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Boat update GET');
+  // Get boat, all designers, manufacturers and types
+  const [boat, allManufacturers, allDesigners, allTypes] = await Promise.all([
+    Boat.findById(req.params.id),
+    Manufacturer.find().exec(),
+    Designer.find().exec(),
+    Type.find().exec(),
+  ]);
+
+  if (boat === null) {
+    // No results.
+    const err = new Error('Boat not found');
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render('boat_form', {
+    title: 'Update Boat',
+    boat,
+    allDesigners,
+    allManufacturers,
+    allTypes,
+  });
 });
 
 // Handle boat update on POST.
-exports.boatUpdatePost = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Boat update POST');
-});
+exports.boatUpdatePost = [
+  // Convert manufacturer to an array
+  (req, res, next) => {
+    if (!(req.body.manufacturer instanceof Array)) {
+      if (typeof req.body.manufacturer === 'undefined') req.body.manufacturer = [];
+      else req.body.manufacturer = new Array(req.body.manufacturer);
+    }
+    next();
+  },
+
+  // Convert designer to an array
+  (req, res, next) => {
+    if (!(req.body.designer instanceof Array)) {
+      if (typeof req.body.designer === 'undefined') req.body.designer = [];
+      else req.body.designer = new Array(req.body.designer);
+    }
+    next();
+  },
+
+  // Convert type to an array
+  (req, res, next) => {
+    if (!(req.body.type instanceof Array)) {
+      if (typeof req.body.type === 'undefined') req.body.type = [];
+      else req.body.type = new Array(req.body.type);
+    }
+    next();
+  },
+
+  // Validate and sanitize form data
+  body('model').trim().isLength({ min: 1 }).escape().withMessage('Model name must be specified.'),
+  body('manufacturer').trim().isLength({ min: 1 }).escape(),
+  body('designer').trim().isLength({ min: 1 }).escape(),
+  body('type').trim().isLength({ min: 1 }).escape().withMessage('Model name must be specified.'),
+  body('displacement').trim().isLength({ min: 1 }).escape(),
+  body('beam').trim().isLength({ min: 1 }).escape(),
+  body('ballast').trim().isLength({ min: 1 }).escape(),
+
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create Designer object with escaped and trimmed data
+    const boat = new Boat({
+      model: req.body.model,
+      manufacturer: req.body.manufacturer,
+      designer: req.body.designer,
+      type: req.body.type,
+      displacement: req.body.displacement,
+      beam: req.body.beam,
+      ballast: req.body.ballast,
+      _id: req.params.id,
+    });
+
+    if (!errors.isEmpty()) {
+      // There is errors redirect to designer create form
+      // Get all designers, manufacturers and types
+      const [allManufacturers, allDesigners, allTypes] = await Promise.all([
+        Manufacturer.find().exec(),
+        Designer.find().exec(),
+        Type.find().exec(),
+      ]);
+      res.render('boat_form', {
+        title: 'Create Boat',
+        allManufacturers,
+        allDesigners,
+        allTypes,
+        boat,
+        errors: errors.array(),
+      });
+    } else {
+      // Data is valid
+      // Update boat
+      const updatedBoat = await Boat.findByIdAndUpdate(req.params.id, boat, {});
+      // Redirect to new boat page
+      res.redirect(updatedBoat.url);
+    }
+  }),
+];

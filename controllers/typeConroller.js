@@ -78,11 +78,9 @@ exports.typeDeleteGet = asyncHandler(async (req, res, next) => {
   // Get type and all the boats of type
   const [type, boatsInType] = await Promise.all([
     Type.findById(req.params.id).exec(),
-    Boat.find({ manufacturer: req.params.id }, 'model manufacturer')
-      .populate('manufacturer')
-      .exec(),
+    Boat.find({ type: req.params.id }, 'model manufacturer').populate('manufacturer').exec(),
   ]);
-  console.log(boatsInType);
+
   if (type === null) {
     // No results.
     res.redirect('/catalog/types');
