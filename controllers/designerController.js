@@ -95,12 +95,45 @@ exports.designerCreatePost = [
 
 // Display designer delete form on GET.
 exports.designerDeleteGet = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Designer delete GET');
+  // Get designer and all the boats s/he design
+  const [designer, boatDesigned] = await Promise.all([
+    Designer.findById(req.params.id).exec(),
+    Boat.find({ designer: req.params.id }, 'model manufacturer').populate('manufacturer').exec(),
+  ]);
+
+  if (designer === null) {
+    // No results.
+    res.redirect('/catalog/designers');
+  }
+
+  res.render('designer_delete', {
+    title: 'Delete Designer',
+    designer,
+    boatDesigned,
+  });
 });
 
 // Handle designer delete on POST.
 exports.designerDeletePost = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Designer delete POST');
+  // Get designer and all the boats s/he design
+  const [designer, boatDesigned] = await Promise.all([
+    Designer.findById(req.params.id).exec(),
+    Boat.find({ designer: req.params.id }, 'model manufacturer').populate('manufacturer').exec(),
+  ]);
+
+  if (boatDesigned.length > 0) {
+    // designer has boat, render same as GET
+    res.render('designer_delete', {
+      title: 'Delete Designer',
+      designer,
+      boatDesigned,
+    });
+    return;
+  }
+
+  // Designer has no boat, delete and redirect to designers
+  await Designer.findByIdAndRemove(req.body.designerId);
+  res.redirect('/catalog/designers');
 });
 
 // Display designer update form on GET.

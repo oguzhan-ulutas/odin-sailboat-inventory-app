@@ -165,11 +165,7 @@ exports.boatCreatePost = [
 // Display boat delete form on GET.
 exports.boatDeleteGet = asyncHandler(async (req, res, next) => {
   // Get detail of boat
-  const boat = await Boat.findById(req.params.id)
-    .populate('manufacturer')
-    .populate('designer')
-    .populate('type')
-    .exec();
+  const boat = await Boat.findById(req.params.id).populate('manufacturer designer type').exec();
 
   if (boat === null) {
     // No boat, redirect to boat list page
