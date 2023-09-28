@@ -99,12 +99,49 @@ exports.manufacturerCreatePost = [
 
 // Display manufacturer delete form on GET.
 exports.manufacturerDeleteGet = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Manufacturer delete GET');
+  // Get manufacturer and all the boats it manufacture
+  const [manufacturer, boatsManufactured] = await Promise.all([
+    Manufacturer.findById(req.params.id).exec(),
+    Boat.find({ manufacturer: req.params.id }, 'model manufacturer')
+      .populate('manufacturer')
+      .exec(),
+  ]);
+
+  if (manufacturer === null) {
+    // No results.
+    res.redirect('/catalog/manufacturers');
+  }
+
+  res.render('manufacturer_delete', {
+    title: 'Delete Manufacturer',
+    manufacturer,
+    boatsManufactured,
+  });
 });
 
 // Handle manufacturer delete on POST.
 exports.manufacturerDeletePost = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Manufacturer delete POST');
+  // Get manufacturer and all the boats it manufacture
+  const [manufacturer, boatsManufactured] = await Promise.all([
+    Manufacturer.findById(req.params.id).exec(),
+    Boat.find({ manufacturer: req.params.id }, 'model manufacturer')
+      .populate('manufacturer')
+      .exec(),
+  ]);
+
+  if (boatsManufactured.length > 0) {
+    // Manufacturer has boat, render same as GET
+    res.render('manufacturer_delete', {
+      title: 'Delete Manufacturer',
+      manufacturer,
+      boatsManufactured,
+    });
+    return;
+  }
+
+  // Manufacturer has no boat, delete and redirect to manufacturers
+  await Manufacturer.findByIdAndRemove(req.body.manufacturerId);
+  res.redirect('/catalog/manufacturers');
 });
 
 // Display manufacturer update form on GET.

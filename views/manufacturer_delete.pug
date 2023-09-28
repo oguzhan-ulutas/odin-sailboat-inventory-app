@@ -1,0 +1,30 @@
+extends layout
+
+block content
+  h1 #{title}: #{`${manufacturer.name} (${manufacturer.city}, ${manufacturer.country})}`}
+
+  if boatsManufactured.length
+
+    p #[strong Delete the following boats before attempting to delete this manufacturer.]
+
+    div(style='margin-left:20px;margin-top:20px')
+
+      h4 Boats
+
+      dl
+      each boat in boatsManufactured
+        dt
+          a(href=boat.url) #{boat.model} 
+          | (Manufacturer: #{boat.manufacturer[0].name})
+        
+    hr
+
+  else
+    hr
+    h3 Do you really want to delete this Designer?
+
+    form(method='POST' action='')
+      div.form-group
+        input#manufacturerId.form-control(type='hidden',name='manufacturerId', required='true', value=manufacturer._id )
+
+      button.btn.btn-primary(type='submit') Delete
