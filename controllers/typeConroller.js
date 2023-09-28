@@ -75,12 +75,49 @@ exports.typeCreatePost = [
 
 // Display type delete form on GET.
 exports.typeDeleteGet = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Type delete GET');
+  // Get type and all the boats of type
+  const [type, boatsInType] = await Promise.all([
+    Type.findById(req.params.id).exec(),
+    Boat.find({ manufacturer: req.params.id }, 'model manufacturer')
+      .populate('manufacturer')
+      .exec(),
+  ]);
+  console.log(boatsInType);
+  if (type === null) {
+    // No results.
+    res.redirect('/catalog/types');
+  }
+
+  res.render('type_delete', {
+    title: 'Delete Type',
+    type,
+    boatsInType,
+  });
 });
 
 // Handle type delete on POST.
 exports.typeDeletePost = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: type delete POST');
+  // Get type and all the boats of type
+  const [type, boatsInType] = await Promise.all([
+    Type.findById(req.params.id).exec(),
+    Boat.find({ manufacturer: req.params.id }, 'model manufacturer type')
+      .populate('manufacturer type')
+      .exec(),
+  ]);
+
+  if (boatsInType.length > 0) {
+    // Type has boat, render same as GET
+    res.render('type_delete', {
+      title: 'Delete Type',
+      type,
+      boatsInType,
+    });
+    return;
+  }
+
+  // Type has no boat, delete and redirect to types
+  await Type.findByIdAndRemove(req.body.typeId);
+  res.redirect('/catalog/types');
 });
 
 // Display type update form on GET.

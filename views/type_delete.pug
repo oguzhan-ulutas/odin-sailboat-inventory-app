@@ -1,0 +1,30 @@
+extends layout
+
+block content
+  h1 #{title}: #{type.name}
+
+  if boatsInType.length
+
+    p #[strong Delete the following boats before attempting to delete this type.]
+
+    div(style='margin-left:20px;margin-top:20px')
+
+      h4 Boats
+
+      dl
+      each boat in boatsInType
+        dt
+          a(href=boat.url) #{boat.model} 
+          | (Manufacturer: #{boat.manufacturer[0].name})
+        
+    hr
+
+  else
+    hr
+    h3 Do you really want to delete this type?
+
+    form(method='POST' action='')
+      div.form-group
+        input#typeId.form-control(type='hidden',name='typeId', required='true', value=type._id )
+
+      button.btn.btn-primary(type='submit') Delete
