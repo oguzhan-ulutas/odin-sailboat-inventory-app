@@ -72,7 +72,7 @@ exports.manufacturerCreatePost = [
       city: req.body.city,
     });
 
-    if (!errors.isEmpty) {
+    if (!errors.isEmpty()) {
       // There is errors redirect to manufacturer create form
       res.render('manufacturer_form', {
         title: 'Create Manufacturer',

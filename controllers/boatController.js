@@ -1,4 +1,5 @@
 const asyncHandler = require('express-async-handler');
+const { body, validationResult } = require('express-validator');
 
 const Boat = require('../models/boat');
 const Designer = require('../models/designer');
@@ -58,13 +59,108 @@ exports.boatDetail = asyncHandler(async (req, res, next) => {
 
 // Display boat create form on GET
 exports.boatCreateGet = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Boat Create GET');
+  // Get all designers, manufacturers and types
+  const [allManufacturers, allDesigners, allTypes] = await Promise.all([
+    Manufacturer.find().exec(),
+    Designer.find().exec(),
+    Type.find().exec(),
+  ]);
+  res.render('boat_form', {
+    title: 'Create Boat',
+    allManufacturers,
+    allDesigners,
+    allTypes,
+  });
 });
 
 // Handle boat create on POST.
-exports.boatCreatePost = asyncHandler(async (req, res, next) => {
-  res.send('NOT IMPLEMENTED: Boat create POST');
-});
+exports.boatCreatePost = [
+  // Convert manufacturer to an array
+  (req, res, next) => {
+    if (!(req.body.manufacturer instanceof Array)) {
+      if (typeof req.body.manufacturer === 'undefined') req.body.manufacturer = [];
+      else req.body.manufacturer = new Array(req.body.manufacturer);
+    }
+    next();
+  },
+
+  // Convert designer to an array
+  (req, res, next) => {
+    if (!(req.body.designer instanceof Array)) {
+      if (typeof req.body.designer === 'undefined') req.body.designer = [];
+      else req.body.designer = new Array(req.body.designer);
+    }
+    next();
+  },
+
+  // Convert type to an array
+  (req, res, next) => {
+    if (!(req.body.type instanceof Array)) {
+      if (typeof req.body.type === 'undefined') req.body.type = [];
+      else req.body.type = new Array(req.body.type);
+    }
+    next();
+  },
+
+  // Validate and sanitize form data
+  body('model').trim().isLength({ min: 1 }).escape().withMessage('Model name must be specified.'),
+  body('manufacturer').trim().isLength({ min: 1 }).escape(),
+  body('designer').trim().isLength({ min: 1 }).escape(),
+  body('type').trim().isLength({ min: 1 }).escape().withMessage('Model name must be specified.'),
+  body('displacement').trim().isLength({ min: 1 }).escape(),
+  body('beam').trim().isLength({ min: 1 }).escape(),
+  body('ballast').trim().isLength({ min: 1 }).escape(),
+
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create Designer object with escaped and trimmed data
+    const boat = new Boat({
+      model: req.body.model,
+      manufacturer: req.body.manufacturer,
+      designer: req.body.designer,
+      type: req.body.type,
+      displacement: req.body.displacement,
+      beam: req.body.beam,
+      ballast: req.body.ballast,
+    });
+
+    if (!errors.isEmpty()) {
+      // There is errors redirect to designer create form
+      // Get all designers, manufacturers and types
+      const [allManufacturers, allDesigners, allTypes] = await Promise.all([
+        Manufacturer.find().exec(),
+        Designer.find().exec(),
+        Type.find().exec(),
+      ]);
+      res.render('boat_form', {
+        title: 'Create Boat',
+        allManufacturers,
+        allDesigners,
+        allTypes,
+        boat,
+        errors: errors.array(),
+      });
+    } else {
+      // Data is valid
+
+      // Check if boat exist in database
+      const boatExist = await Boat.findOne({
+        model: boat.model,
+      }).exec();
+      if (boatExist) {
+        // Boat exist redirect to manufacturer detail page
+        res.redirect(boatExist.url);
+      } else {
+        // Save boat
+        await boat.save();
+        // Redirect to new boat page
+        res.redirect(boat.url);
+      }
+    }
+  }),
+];
 
 // Display boat delete form on GET.
 exports.boatDeleteGet = asyncHandler(async (req, res, next) => {

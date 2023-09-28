@@ -65,7 +65,7 @@ exports.designerCreatePost = [
       last_name: req.body.last_name,
     });
 
-    if (!errors.isEmpty) {
+    if (!errors.isEmpty()) {
       // There is errors redirect to designer create form
       res.render('designer_form', {
         title: 'Create Designer',

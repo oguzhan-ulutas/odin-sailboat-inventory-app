@@ -1,0 +1,51 @@
+extends layout
+
+block content
+  h1 #{title}
+
+  form(method='POST' action='')
+    div.form-group
+      label(for='model') Model:
+      input#model.form-control(type='text', placeholder='Dana 24 etc.' name='model' value=(undefined===boat ? '' : boat.model))
+    div.form-group
+      label(for='manufacturer') Manufacturer:
+      select#manufacturer-boat.form-control(type='select', placeholder='Select the manufacturer' name='manufacturer' required="true")
+        - allManufacturers.sort(function(a, b) {let textA = a.name.toUpperCase(); let textB = b.name.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;});
+        for manufacturer in allManufacturers
+          if boat
+            option(value=manufacturer._id selected=(manufacturer._id.toString()===boat.manufacturer[0]._id.toString() ? 'selected' : false) ) #{manufacturer.name}
+          else
+            option(value=manufacturer._id) #{manufacturer.name}
+    div.form-group
+      label(for='designer') Designer:
+      select#designer-boat.form-control(type='select', placeholder='Select designer' name='designer' required="true")
+        - allDesigners.sort(function(a, b) {let textA = a.first_name.toUpperCase(); let textB = b.first_name.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;});
+        for designer in allDesigners
+          if boat
+            option(value=designer._id selected=(designer._id.toString()===boat.designer[0]._id.toString() ? 'selected' : false) ) #{designer.first_name} #{designer.last_name}
+          else
+            option(value=designer._id) #{designer.first_name} #{designer.last_name}
+    div.form-group
+      label(for='type') Type:
+      select#type-model.form-control(type='select', placeholder='Select boat type.' name='type' required="true")
+        - allTypes.sort(function(a, b) {let textA = a.name.toUpperCase(); let textB = b.name.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;});
+        for type in allTypes
+          if boat
+            option(value=type._id selected=(type._id.toString()===boat.type[0]._id.toString() ? 'selected' : false) ) #{type.name}
+          else
+            option(value=type._id) #{type.name}
+    div.form-group
+      label(for='displacement') Displacement:
+      input#displacement.form-control(type='text', placeholder='8,000.00 lb / 3,629 kg etc.' name='displacement' value=(undefined===boat ? '' : boat.displacement))
+    div.form-group
+      label(for='beam') Beam:
+      input#beam.form-control(type='text', placeholder='8.58 ft / 2.62 m etc.' name='beam' value=(undefined===boat ? '' : boat.beam))
+    div.form-group
+      label(for='ballast') Ballast:
+      input#ballast.form-control(type='text', placeholder='3,200.00 lb / 1,451 kg etc.' name='ballast' value=(undefined===boat ? '' : boat.ballast))
+    button.btn.btn-primary(type='submit') Submit
+
+  if errors
+   ul
+    for error in errors
+     li!= error.msg
